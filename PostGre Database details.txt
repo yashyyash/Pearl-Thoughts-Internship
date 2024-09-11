@@ -1,0 +1,6 @@
+CREATE DATABASE medusa_db;
+CREATE USER medusa_user WITH ENCRYPTED PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE medusa_db TO medusa_user;
+\l  -- List all databases
+\du -- List all users
+\q
