@@ -4,3 +4,5 @@ GRANT ALL PRIVILEGES ON DATABASE medusa_db TO medusa_user;
 \l  -- List all databases
 \du -- List all users
 \q
+
+https://chatgpt.com/c/66e2bb81-e950-800a-b3c7-43f568869d9c
