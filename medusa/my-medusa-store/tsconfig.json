@@ -1,4 +1,5 @@
 {
+
   "compilerOptions": {
     "target": "es2019",
     "allowJs": true,
@@ -19,6 +20,7 @@
     "resolveJsonModule": true,
     "checkJs": false
   },
+  
   "include": ["src/"],
   "exclude": [
     "**/__tests__",
