@@ -1,0 +1,8 @@
+TASK3: Deploy Medusa on AWS EC2
+Name: Yash Mutatkar
+Date of posting: 17-09-2024
+Github: https://github.com/yashyyash/Pearl-Thoughts-Internship
+Video-Links: https://drive.google.com/file/d/1buXXqsJhy-Rtk6jSKMzFUHzLH0ZqDEU2/view?usp=drive_link
+Documentation: https://github.com/yashyyash/Pearl-Thoughts-Internship/blob/main/Documentation/16-September-Task3-EC2.pdf
+16-September-Task3-EC2.pdf
+ 
