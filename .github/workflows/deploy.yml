@@ -3,7 +3,7 @@ name: Deploy Medusa to EC2
 on:
   push:
     branches:
-      - main
+      - main  # Trigger deployment on pushes to the main branch
 
 jobs:
   deploy:
@@ -16,19 +16,27 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '18'  # Use the same Node.js version as on your EC2 instance
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Medusa
+        run: npm run build
 
       - name: Copy files to EC2
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}  # Your private SSH key
+          EC2_HOST: ${{ secrets.EC2_HOST }}  # Your EC2 instance public IP
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r . ec2-user@54.159.72.168:/home/ubuntu/my-medusa-store
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r . ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/my-medusa-store
 
       - name: Run Medusa on EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@54.159.72.168 "cd /home/ubuntu/my-medusa-store && node --max-old-space-size=512 index.js"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "cd /home/ubuntu/my-medusa-store && npm run start"
