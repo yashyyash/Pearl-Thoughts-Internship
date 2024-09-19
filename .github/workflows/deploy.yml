@@ -19,8 +19,10 @@ jobs:
           node-version: '18'  # Match your local Node.js version
 
       - name: Install dependencies
-        run: npm install
-      
+        run: |
+          cd Task4/my-medusa-store  # Navigate to the project directory
+          npm install
+          
       - name: Copy files to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
@@ -28,7 +30,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./ ec2-user@54.159.72.168:/home/ubuntu/my-medusa-store
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./Task4/my-medusa-store ec2-user@54.159.72.168:/home/ubuntu/my-medusa-store
 
       - name: Run Medusa on EC2
         env:
