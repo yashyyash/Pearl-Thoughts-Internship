@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_instance" "medusa_instance" {
   ami           = "ami-0e86e20dae9224db8"  # Ubuntu Server 24.04 LTS
   instance_type = "t2.micro"
-  key_name      = "your-key-pair-name"  # Replace with your key pair name
+  key_name      = "Medusa-Yash-Key-Pair4"  # Replace with your key pair name
 
   tags = {
     Name = "Medusa-Yash-EC2-Instance"
