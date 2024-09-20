@@ -1,0 +1,6 @@
+TASK -6 :- Deploy medusa by " ECS Fargate spot" & Create a  "terraform script for ECS Fargate spot " and deploy it   -- 20/09/2024
+
+Objective:-  The objective of this task is to deploy a Medusa e-commerce platform on AWS ECS Fargate Spot using Terraform for cost-efficient container management. The deployment will leverage ECS Fargate Spot to reduce infrastructure costs while maintaining high availability. The Terraform script will provision an ECS cluster, task definitions, service, and necessary networking components (VPC, subnets, security groups). Additionally, Medusa's container image will be built and stored in an ECR repository. 
+ 
+ 
+ 
