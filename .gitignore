@@ -1,3 +1,8 @@
 Documentation/
 medusa/
 Medusa-For-EC2-Github/
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+.terraform.tfstate.backup
