@@ -1,0 +1,24 @@
+name: Teams Notifications
+
+on:
+  pull_request:
+    types: [opened, reopened, closed, review_requested]
+  pull_request_review:
+    types: [submitted]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Microsoft Teams Notification
+      uses: skitionek/notify-microsoft-teams@master
+      with:
+        webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
+        needs: ${{ toJson(needs) }}
+        job: ${{ toJson(job) }}
+        steps: ${{ toJson(steps) }}
+        dry_run: false
+        overwrite: "{title: `Pull Request ${github.event.action}`, sections: [{activityTitle: `${github.event.pull_request.title}`, activitySubtitle: `by ${github.event.pull_request.user.login}`}]}"

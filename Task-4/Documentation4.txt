@@ -1,0 +1,181 @@
+Task-4: Create an EC2 Instance Manually and Deploy Medusa Application Using GitHub Actions
+General Objective
+Create an EC2 instance manually and set up a GitHub Actions workflow to deploy the Medusa application on the EC2 instance automatically.
+
+Step 1: Create an EC2 Instance
+Log in to the AWS Management Console:
+
+Go to the AWS Management Console and log in.
+Navigate to EC2:
+
+From the services menu, click on "EC2".
+Launch Instance:
+
+Click on the "Launch Instance" button.
+Choose an Amazon Machine Image (AMI):
+
+Select an appropriate AMI (e.g., Ubuntu Server 20.04 LTS).
+Choose an Instance Type:
+
+Select an instance type (e.g., t2.micro for Free Tier eligibility).
+Configure Instance Details:
+
+Keep the default settings or configure based on your requirements.
+Ensure that you have a Public IP assigned.
+Add Storage:
+
+The default storage is usually sufficient, but you can modify if needed.
+Add Tags:
+
+Add any tags to help you identify your instance later (optional).
+Configure Security Group:
+
+Create a new security group or select an existing one.
+Inbound Rules:
+Allow SSH (port 22) from your IP.
+Allow HTTP (port 80) or HTTPS (port 443) if required for your application.
+Allow port 9000 (if your Medusa app runs on this port).
+Review and Launch:
+
+Review your settings, then click "Launch".
+Select or create a new key pair to SSH into your instance. Download the key pair.
+Access Your Instance:
+
+Use SSH to connect to your instance:
+bash
+Copy code
+ssh -i /path/to/your-key.pem ubuntu@your-instance-public-ip
+Step 2: Set Up the Medusa Application on EC2
+Update the Package List:
+
+bash
+Copy code
+sudo apt update
+sudo apt upgrade -y
+Install Node.js:
+
+bash
+Copy code
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+Install PostgreSQL:
+
+bash
+Copy code
+sudo apt install -y postgresql postgresql-contrib
+Configure PostgreSQL:
+
+Switch to the postgres user and create a database and user for Medusa.
+bash
+Copy code
+sudo -i -u postgres
+psql
+CREATE DATABASE medusa_db;
+CREATE USER medusa_user WITH PASSWORD 'your_password';
+ALTER USER medusa_user CREATEDB;
+GRANT ALL PRIVILEGES ON DATABASE medusa_db TO medusa_user;
+\q
+exit
+Clone Your Medusa Repository:
+
+bash
+Copy code
+git clone https://github.com/your-username/your-medusa-repo.git
+cd your-medusa-repo
+Install Dependencies:
+
+bash
+Copy code
+npm install
+Set Environment Variables:
+
+Create a .env file with the necessary configuration.
+bash
+Copy code
+touch .env
+Populate it with your configurations, e.g.:
+
+makefile
+Copy code
+DATABASE_URL=postgres://medusa_user:your_password@localhost:5432/medusa_db
+JWT_SECRET=something
+COOKIE_SECRET=something
+Run Migrations:
+
+bash
+Copy code
+npx medusa migrations run
+Start the Medusa Server:
+
+bash
+Copy code
+npm run start
+Step 3: Set Up GitHub Actions
+Create a GitHub Actions Workflow:
+
+In your Medusa repository, create a .github/workflows directory.
+bash
+Copy code
+mkdir -p .github/workflows
+Create a Workflow File:
+
+Create a YAML file (e.g., deploy.yml) in the .github/workflows directory.
+yaml
+Copy code
+name: Deploy Medusa
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          echo "${PRIVATE_KEY}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -o StrictHostKeyChecking=no -r . $USER@$HOST:/home/ubuntu/your-medusa-repo
+          ssh -i private_key.pem -o StrictHostKeyChecking=no $USER@$HOST 'cd /home/ubuntu/your-medusa-repo && npm install && npm run start'
+Add Secrets in GitHub:
+
+Go to your GitHub repository > Settings > Secrets and Variables > Actions > New repository secret.
+Add the following secrets:
+EC2_SSH_KEY: Your private SSH key content.
+EC2_HOST: Your EC2 instance public IP.
+EC2_USER: Usually ubuntu for Ubuntu instances.
+Step 4: Test Your Deployment
+Push Changes to GitHub:
+
+Commit your changes and push to the main branch.
+bash
+Copy code
+git add .
+git commit -m "Set up GitHub Actions for deployment"
+git push origin main
+Monitor GitHub Actions:
+
+Go to the "Actions" tab in your GitHub repository to see the deployment process.
+Ensure the deployment completes successfully.
+Step 5: Access Your Medusa Application
+Open your browser and go to http://your-instance-public-ip:9000 to access the Medusa application.
+Conclusion
+You have now successfully created an EC2 instance, deployed the Medusa application, and set up GitHub Actions for automated deployments! If you encounter any issues, check the logs and configurations, or reach out for further assistance.
